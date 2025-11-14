@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model program_kerja {
+  id Int @id @default(autoincrement())
+  judul String @unique
+  sub_judul String
+  description Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
