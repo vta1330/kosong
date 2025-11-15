@@ -1,4 +1,4 @@
-import * as Services from "./service.js";
+import * as Services from "../services/kegiatan.service.js";
 
 export const createKegiatan = async (req, res, next) => {
   try {
@@ -51,7 +51,7 @@ export const updateKegiatan = async (req, res, next) => {
 
     res.json({
       status: "success",
-      message: "Kegiatan berhasil di update",
+      message: "Kegiatan berhasil di perbarui",
       data,
     });
   } catch (err) {

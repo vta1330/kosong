@@ -5,7 +5,7 @@ import {
   getKegiatanById,
   listKegiatan,
   updateKegiatan,
-} from "./controller.js";
+} from "../controllers/kegiatan.controller.js";
 
 const router = express.Router();
 

@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model program_kerja {
+model Program_kerja {
   id Int @id @default(autoincrement())
   judul String @unique
   sub_judul String
@@ -18,7 +18,7 @@ model program_kerja {
   updatedAt DateTime @updatedAt
 }
 
-model kegiatan {
+model Kegiatan {
   id Int @id @default(autoincrement())
   judul String @unique
   description Json
@@ -27,4 +27,28 @@ model kegiatan {
   image String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Publikasi {
+  id Int @id @default(autoincrement())
+  judul String @unique
+  description Json
+  tanggal String
+  jenisDokumen Int
+  image String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relation
+  jenis JenisDokumen @relation(fields: [jenisDokumen], references: [id])
+}
+
+model JenisDokumen {
+  id Int @id @default(autoincrement())
+  nama String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relation
+  publikasi Publikasi[]
 }

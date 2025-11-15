@@ -1,4 +1,4 @@
-import * as services from "./service.js";
+import * as services from "../services/programKerja.service.js";
 
 /**
  * Create
@@ -9,6 +9,7 @@ export const createProgramKerja = async (req, res, next) => {
 
     res.json({
       status: "success",
+      message: "Program kerja berhasil di buat",
       data,
     });
   } catch (err) {
@@ -62,6 +63,7 @@ export const updateProgramKerja = async (req, res, next) => {
 
     res.json({
       status: "success",
+      message: "Program kerja berhasil di perbarui",
       data,
     });
   } catch (err) {

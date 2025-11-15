@@ -5,7 +5,7 @@ import {
   getProgramKerjaById,
   listProgramKerja,
   updateProgramKerja,
-} from "./controller.js";
+} from "../controllers/programKerja.controller.js";
 
 const router = Router();
 
