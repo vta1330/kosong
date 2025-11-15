@@ -5,11 +5,11 @@ import * as services from "./service.js";
  */
 export const createProgramKerja = async (req, res, next) => {
   try {
-    const program = await services.createProgramKerja(req.body);
+    const data = await services.createProgramKerja(req.body);
 
     res.json({
       status: "success",
-      program,
+      data,
     });
   } catch (err) {
     next(err);
@@ -21,11 +21,11 @@ export const createProgramKerja = async (req, res, next) => {
  */
 export const listProgramKerja = async (_req, res, next) => {
   try {
-    const program = await services.listProgramKerja();
+    const data = await services.listProgramKerja();
 
     res.json({
       status: "success",
-      program,
+      data,
     });
   } catch (err) {
     next(err);

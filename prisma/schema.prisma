@@ -13,6 +13,18 @@ model program_kerja {
   judul String @unique
   sub_judul String
   description Json
+  kategori String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model kegiatan {
+  id Int @id @default(autoincrement())
+  judul String @unique
+  description Json
+  tanggal String
+  kategori String
+  image String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

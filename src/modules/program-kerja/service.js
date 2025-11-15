@@ -72,11 +72,11 @@ export const updateProgramKerja = async (payload, id) => {
     const duplicate = await prisma.program_kerja.findUnique({
       where: { judul },
     });
-  }
 
-  //   Jika sudah dipakai, tampilkan pesan dan code http
-  if (duplicate && duplicate.id !== Number.id) {
-    throw new AppError("Judul program kerja sudah digunakan", 409);
+    //   Jika sudah dipakai, tampilkan pesan dan code http
+    if (duplicate && duplicate.id !== Number.id) {
+      throw new AppError("Judul program kerja sudah digunakan", 409);
+    }
   }
 
   //   Jika project program kerja ada, Update.
