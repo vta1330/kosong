@@ -20,7 +20,11 @@ export const createJenisDokumen = async (payload) => {
 };
 
 export const listJenisDokumen = async () => {
-  const data = await prisma.jenisDokumen.findMany();
+  const data = await prisma.jenisDokumen.findMany({
+    include: {
+      publikasi: true,
+    },
+  });
   return data;
 };
 
@@ -29,6 +33,9 @@ export const updateJenisDokumen = async (payload, id) => {
 
   const exisingJenisDokumen = await prisma.jenisDokumen.findUnique({
     where: { id: Number(id) },
+    include: {
+      publikasi: true,
+    },
   });
 
   if (!exisingJenisDokumen) {
@@ -37,10 +44,10 @@ export const updateJenisDokumen = async (payload, id) => {
 
   if (nama) {
     const duplicate = await prisma.jenisDokumen.findUnique({
-      where: { id: Number(id) },
+      where: { nama },
     });
 
-    if (duplicate && duplicate.id !== Number.id) {
+    if (duplicate && duplicate.id !== Number(id)) {
       throw new AppError("Nama jenis dokumen sudah di gunakan", 409);
     }
   }

@@ -14,7 +14,7 @@ export const createProgramKerja = async (payload) => {
 
   //   Jika judul sudah ada, maka tampilkan pesan dan code http
   if (exisingJudul) {
-    throw new AppError("Program kerja sudah ada", 409);
+    throw new AppError("Judul program kerja sudah ada", 409);
   }
 
   //   Jika tidak ada, create.
@@ -74,7 +74,7 @@ export const updateProgramKerja = async (payload, id) => {
     });
 
     //   Jika sudah dipakai, tampilkan pesan dan code http
-    if (duplicate && duplicate.id !== Number.id) {
+    if (duplicate && duplicate.id !== Number(id)) {
       throw new AppError("Judul program kerja sudah digunakan", 409);
     }
   }

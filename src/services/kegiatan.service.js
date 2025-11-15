@@ -3,11 +3,18 @@ import AppError from "../utils/AppError.js";
 
 export const createKegiatan = async (paylaod) => {
   const { judul, description, tanggal, kategori, image } = paylaod;
-
   const dateObj = new Date(tanggal);
 
   if (isNaN(dateObj)) {
     throw new AppError("Tanggal tidak valid", 400);
+  }
+
+  const exisingJudul = await prisma.kegiatan.findUnique({
+    where: { judul },
+  });
+
+  if (exisingJudul) {
+    throw new AppError("Judul kegiatan sudah di gunakan", 409);
   }
 
   const data = await prisma.kegiatan.create({
@@ -50,7 +57,7 @@ export const updateKegiatan = async (payload, id) => {
       where: { judul },
     });
 
-    if (duplicate && duplicate.id !== Number.id) {
+    if (duplicate && duplicate.id !== Number(id)) {
       throw new AppError("Judul kegiatan sudah di gunakan", 409);
     }
   }

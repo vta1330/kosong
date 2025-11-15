@@ -1,12 +1,18 @@
 import { Router } from "express";
-import {} from "../controllers/publikasi.controller.js";
+import {
+  createPublikasi,
+  deletePublikasi,
+  getPublikasiById,
+  listPublikasi,
+  updatePublikasi,
+} from "../controllers/publikasi.controller.js";
 
 const router = Router();
 
-router.post("/", createProgramKerja);
-router.get("/", listProgramKerja);
-router.get("/:id", getProgramKerjaById);
-router.patch("/:id", updateProgramKerja);
-router.delete("/:id", deleteProgramKerja);
+router.post("/", createPublikasi);
+router.get("/", listPublikasi);
+router.get("/:id", getPublikasiById);
+router.patch("/:id", updatePublikasi);
+router.delete("/:id", deletePublikasi);
 
 export default router;
