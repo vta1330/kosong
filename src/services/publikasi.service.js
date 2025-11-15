@@ -1,89 +1,65 @@
 import prisma from "../config/prisma.js";
 import AppError from "../utils/AppError.js";
+import { deleteFile } from "../utils/deleteFile.js";
 
 export const createPublikasi = async (payload) => {
-  const { judul, description, tanggal, jenisDokumen, image } = payload;
+  const { judul, description, tanggal, jenisDokumen, dokumen } = payload;
 
-  const exisingJudul = await prisma.publikasi.findUnique({
-    where: { judul },
+  const existing = await prisma.publikasi.findUnique({ where: { judul } });
+  if (existing) throw new AppError("Judul publikasi sudah digunakan", 409);
+
+  return prisma.publikasi.create({
+    data: { judul, description, tanggal, jenisDokumen, dokumen },
   });
-
-  if (exisingJudul) {
-    throw new AppError("Judul publikasi sudah di gunakan", 409);
-  }
-
-  const data = await prisma.publikasi.create({
-    data: { judul, description, tanggal, jenisDokumen, image },
-  });
-
-  return data;
 };
 
 export const listPublikasi = async () => {
-  const data = await prisma.publikasi.findMany({
-    include: {
-      jenis: true,
-    },
+  return prisma.publikasi.findMany({
+    include: { jenis: true },
   });
-  return data;
 };
 
 export const getPublikasiById = async (id) => {
   const data = await prisma.publikasi.findUnique({
     where: { id: Number(id) },
-    include: {
-      jenis: true,
-    },
+    include: { jenis: true },
   });
 
-  if (!data) {
-    throw new AppError("Publikasi tidak di temukan");
-  }
-
+  if (!data) throw new AppError("Publikasi tidak di temukan", 404);
   return data;
 };
 
 export const updatePublikasi = async (payload, id) => {
-  const { judul, description, tanggal, jenisDokumen, image } = payload;
-
-  const exisingPublikasi = await prisma.publikasi.findUnique({
+  const existing = await prisma.publikasi.findUnique({
     where: { id: Number(id) },
   });
 
-  if (!exisingPublikasi) {
-    throw new AppError("Publikasi tidak di temukan", 404);
+  if (!existing) throw new AppError("Publikasi tidak ditemukan", 404);
+
+  // Jika ada dokumen baru → hapus yang lama
+  if (payload.dokumen && existing.dokumen) {
+    deleteFile(`uploads/dokumen/${existing.dokumen}`);
   }
 
-  if (judul) {
-    const duplicate = await prisma.publikasi.findUnique({
-      where: { judul },
-    });
-
-    if (duplicate && duplicate.id !== Number(id)) {
-      throw new AppError("Judul publikasi sudah di gunakan", 409);
-    }
-  }
-
-  const data = await prisma.publikasi.update({
+  return prisma.publikasi.update({
     where: { id: Number(id) },
-    data: { judul, description, tanggal, jenisDokumen, image },
+    data: {
+      ...payload,
+      dokumen: payload.dokumen ? payload.dokumen : existing.dokumen,
+    },
   });
-
-  return data;
 };
 
 export const deletePublikasi = async (id) => {
-  const exisingPublikasi = await prisma.publikasi.findUnique({
+  const existing = await prisma.publikasi.findUnique({
     where: { id: Number(id) },
   });
 
-  if (!exisingPublikasi) {
-    throw new AppError("Publikasi tidak di temukan", 404);
+  if (!existing) throw new AppError("Publikasi tidak ditemukan", 404);
+
+  if (existing.dokumen) {
+    deleteFile(`uploads/dokumen/${existing.dokumen}`);
   }
 
-  const data = await prisma.publikasi.delete({
-    where: { id: Number(id) },
-  });
-
-  return data;
+  return prisma.publikasi.delete({ where: { id: Number(id) } });
 };

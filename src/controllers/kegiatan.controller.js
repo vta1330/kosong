@@ -1,5 +1,4 @@
 import * as Services from "../services/kegiatan.service.js";
-import { BASE_URL } from "../config/app.js";
 import { deleteFile } from "../utils/deleteFile.js";
 
 const formatImageUrl = (data) => {

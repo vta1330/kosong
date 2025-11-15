@@ -20,7 +20,7 @@ router.post(
   "/",
   uploadFoto.single("image"),
   createKegiatanValidator,
-  validate,
+  validate("uploads/foto"),
   createKegiatan
 );
 
@@ -35,7 +35,7 @@ router.patch(
   "/:id",
   uploadFoto.single("image"),
   updateKegiatanValidator,
-  validate,
+  validate("uploads/foto"),
   updateKegiatan
 );
 

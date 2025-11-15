@@ -1,16 +1,24 @@
 import { validationResult } from "express-validator";
 import AppError from "../utils/AppError.js";
+import { deleteFile } from "../utils/deleteFile.js";
 
-export const validate = (req, _res, next) => {
-  const errors = validationResult(req);
+export const validate =
+  (folder = null) =>
+  (req, _res, next) => {
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const msg = errors
-      .array()
-      .map((e) => e.msg)
-      .join(", ");
-    return next(new AppError(msg, 400));
-  }
+    if (!errors.isEmpty()) {
+      // ⛔ Jika ada file ter-upload → hapus dari folder yang sesuai
+      if (req.file && folder) {
+        deleteFile(`${folder}/${req.file.filename}`);
+      }
 
-  next();
-};
+      const msg = errors
+        .array()
+        .map((e) => e.msg)
+        .join(", ");
+      return next(new AppError(msg, 400));
+    }
+
+    next();
+  };
