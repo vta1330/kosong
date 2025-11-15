@@ -6,13 +6,40 @@ import {
   listKegiatan,
   updateKegiatan,
 } from "../controllers/kegiatan.controller.js";
+import { uploadFoto } from "../middleware/foto.js";
+import { validate } from "../middleware/validate.js";
+import {
+  createKegiatanValidator,
+  updateKegiatanValidator,
+} from "../validators/kegiatan.validator.js";
 
 const router = express.Router();
 
-router.post("/", createKegiatan);
+// CREATE
+router.post(
+  "/",
+  uploadFoto.single("image"),
+  createKegiatanValidator,
+  validate,
+  createKegiatan
+);
+
+// LIST
 router.get("/", listKegiatan);
+
+// DETAIL
 router.get("/:id", getKegiatanById);
-router.patch("/:id", updateKegiatan);
+
+// UPDATE
+router.patch(
+  "/:id",
+  uploadFoto.single("image"),
+  updateKegiatanValidator,
+  validate,
+  updateKegiatan
+);
+
+// DELETE
 router.delete("/:id", deleteKegiatan);
 
 export default router;

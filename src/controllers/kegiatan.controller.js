@@ -1,27 +1,41 @@
 import * as Services from "../services/kegiatan.service.js";
+import { BASE_URL } from "../config/app.js";
+import { deleteFile } from "../utils/deleteFile.js";
+
+const formatImageUrl = (data) => {
+  if (!data.image) return data;
+  return {
+    ...data,
+    imageUrl: `${BASE_URL}/uploads/foto/${data.image}`,
+  };
+};
 
 export const createKegiatan = async (req, res, next) => {
   try {
-    const data = await Services.createKegiatan(req.body);
+    const payload = {
+      ...req.body,
+      image: req.file?.filename || null,
+    };
 
-    res.json({
+    const data = await Services.createKegiatan(payload);
+
+    return res.json({
       status: "success",
-      message: "Kegiatan berhasil di buat",
-      data,
+      message: "Kegiatan berhasil dibuat",
+      data: formatImageUrl(data),
     });
   } catch (err) {
+    if (req.file) deleteFile(`uploads/foto/${req.file.filename}`);
     next(err);
   }
 };
 
 export const listKegiatan = async (_req, res, next) => {
   try {
-    const data = await Services.listKegiatan();
+    let data = await Services.listKegiatan();
+    data = data.map(formatImageUrl);
 
-    res.json({
-      status: "success",
-      data,
-    });
+    res.json({ status: "success", data });
   } catch (err) {
     next(err);
   }
@@ -29,14 +43,8 @@ export const listKegiatan = async (_req, res, next) => {
 
 export const getKegiatanById = async (req, res, next) => {
   try {
-    const id = req.params.id;
-
-    const data = await Services.getKegiatanById(id);
-
-    res.json({
-      status: "success",
-      data,
-    });
+    let data = await Services.getKegiatanById(req.params.id);
+    res.json({ status: "success", data: formatImageUrl(data) });
   } catch (err) {
     next(err);
   }
@@ -44,31 +52,31 @@ export const getKegiatanById = async (req, res, next) => {
 
 export const updateKegiatan = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const payload = req.body;
+    const payload = {
+      ...req.body,
+      image: req.file?.filename || null,
+    };
 
-    const data = await Services.updateKegiatan(payload, id);
+    const updated = await Services.updateKegiatan(payload, req.params.id);
 
     res.json({
       status: "success",
-      message: "Kegiatan berhasil di perbarui",
-      data,
+      message: "Kegiatan berhasil diperbarui",
+      data: formatImageUrl(updated),
     });
   } catch (err) {
+    if (req.file) deleteFile(`uploads/foto/${req.file.filename}`);
     next(err);
   }
 };
 
 export const deleteKegiatan = async (req, res, next) => {
   try {
-    const id = req.params.id;
-
-    const data = await Services.deleteKegiatan(id);
+    const deleted = await Services.deleteKegiatan(req.params.id);
 
     res.json({
       status: "success",
-      message: "Kegiatan berhasil di hapus",
-      data,
+      message: "Kegiatan berhasil dihapus",
     });
   } catch (err) {
     next(err);

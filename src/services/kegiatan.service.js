@@ -1,32 +1,23 @@
 import prisma from "../config/prisma.js";
 import AppError from "../utils/AppError.js";
+import { deleteFile } from "../utils/deleteFile.js";
 
-export const createKegiatan = async (paylaod) => {
-  const { judul, description, tanggal, kategori, image } = paylaod;
+export const createKegiatan = async (payload) => {
+  const { judul, description, tanggal, kategori, image } = payload;
+
   const dateObj = new Date(tanggal);
+  if (isNaN(dateObj)) throw new AppError("Tanggal tidak valid", 400);
 
-  if (isNaN(dateObj)) {
-    throw new AppError("Tanggal tidak valid", 400);
-  }
+  const exist = await prisma.kegiatan.findUnique({ where: { judul } });
+  if (exist) throw new AppError("Judul kegiatan sudah digunakan", 409);
 
-  const exisingJudul = await prisma.kegiatan.findUnique({
-    where: { judul },
-  });
-
-  if (exisingJudul) {
-    throw new AppError("Judul kegiatan sudah di gunakan", 409);
-  }
-
-  const data = await prisma.kegiatan.create({
+  return prisma.kegiatan.create({
     data: { judul, description, tanggal, kategori, image },
   });
-
-  return data;
 };
 
 export const listKegiatan = async () => {
-  const data = await prisma.kegiatan.findMany();
-  return data;
+  return prisma.kegiatan.findMany();
 };
 
 export const getKegiatanById = async (id) => {
@@ -34,9 +25,7 @@ export const getKegiatanById = async (id) => {
     where: { id: Number(id) },
   });
 
-  if (!data) {
-    throw new AppError("Kegiatan tidak di temukan", 404);
-  }
+  if (!data) throw new AppError("Kegiatan tidak ditemukan", 404);
 
   return data;
 };
@@ -44,44 +33,39 @@ export const getKegiatanById = async (id) => {
 export const updateKegiatan = async (payload, id) => {
   const { judul, description, tanggal, kategori, image } = payload;
 
-  const exisingKegiatan = await prisma.kegiatan.findUnique({
+  const existing = await prisma.kegiatan.findUnique({
     where: { id: Number(id) },
   });
+  if (!existing) throw new AppError("Kegiatan tidak ditemukan", 404);
 
-  if (!exisingKegiatan) {
-    throw new AppError("Kegiatan tidak di temukan", 404);
+  // Hapus gambar lama jika ada gambar baru
+  if (image && existing.image) {
+    deleteFile(`uploads/foto/${existing.image}`);
   }
 
-  if (judul) {
-    const duplicate = await prisma.kegiatan.findUnique({
-      where: { judul },
-    });
-
-    if (duplicate && duplicate.id !== Number(id)) {
-      throw new AppError("Judul kegiatan sudah di gunakan", 409);
-    }
-  }
-
-  const data = await prisma.kegiatan.update({
+  return prisma.kegiatan.update({
     where: { id: Number(id) },
-    data: { judul, description, tanggal, kategori, image },
+    data: {
+      judul,
+      description,
+      tanggal,
+      kategori,
+      image: image || existing.image,
+    },
   });
-
-  return data;
 };
 
 export const deleteKegiatan = async (id) => {
-  const exisingKegiatan = await prisma.kegiatan.findUnique({
+  const existing = await prisma.kegiatan.findUnique({
     where: { id: Number(id) },
   });
+  if (!existing) throw new AppError("Kegiatan tidak ditemukan", 404);
 
-  if (!exisingKegiatan) {
-    throw new AppError("Kegiatan tidak di temukan", 404);
+  if (existing.image) {
+    deleteFile(`uploads/foto/${existing.image}`);
   }
 
-  const data = await prisma.kegiatan.delete({
+  return prisma.kegiatan.delete({
     where: { id: Number(id) },
   });
-
-  return data;
 };
