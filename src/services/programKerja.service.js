@@ -5,7 +5,7 @@ import AppError from "../utils/AppError.js";
  * Create
  */
 export const createProgramKerja = async (payload) => {
-  const { judul, sub_judul, description } = payload;
+  const { judul, sub_judul, description, kategori } = payload;
 
   //   cek apakah sudah ada judul yang sama dengan program kerja sebelumnya
   const exisingJudul = await prisma.program_kerja.findUnique({
@@ -19,7 +19,7 @@ export const createProgramKerja = async (payload) => {
 
   //   Jika tidak ada, create.
   const data = await prisma.program_kerja.create({
-    data: { judul, sub_judul, description },
+    data: { judul, sub_judul, description, kategori },
   });
 
   return data;
@@ -55,7 +55,7 @@ export const getProgramKerjaById = async (id) => {
  * Update
  */
 export const updateProgramKerja = async (payload, id) => {
-  const { judul, sub_judul, description } = payload;
+  const { judul, sub_judul, description, kategori } = payload;
 
   // Cek apakah project program kerja ada jika dicari lewat Id
   const exisingProgram = await prisma.program_kerja.findUnique({
@@ -82,7 +82,7 @@ export const updateProgramKerja = async (payload, id) => {
   //   Jika project program kerja ada, Update.
   const data = await prisma.program_kerja.update({
     where: { id: Number(id) },
-    data: { judul, sub_judul, description },
+    data: { judul, sub_judul, description, kategori },
   });
 
   return data;

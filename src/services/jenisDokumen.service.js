@@ -59,3 +59,19 @@ export const updateJenisDokumen = async (payload, id) => {
 
   return data;
 };
+
+export const deleteJenisDokumen = async (id) => {
+  const exisingJenisDokumen = await prisma.jenisDokumen.findUnique({
+    where: { id: Number(id) },
+  });
+
+  if (!exisingJenisDokumen) {
+    throw new AppError("Jenis dokumen tidak ada", 404);
+  }
+
+  const data = await prisma.jenisDokumen.delete({
+    where: { id: Number(id) },
+  });
+
+  return data;
+};

@@ -12,7 +12,7 @@ const router = Router();
 router.post("/", createProgramKerja);
 router.get("/", listProgramKerja);
 router.get("/:id", getProgramKerjaById);
-router.patch("/:id", updateProgramKerja);
+router.patch("/:id", updateProgramKerja); 
 router.delete("/:id", deleteProgramKerja);
 
 export default router;

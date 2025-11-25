@@ -1,5 +1,9 @@
 import * as Services from "../services/kegiatan.service.js";
 import { deleteFile } from "../utils/deleteFile.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000/api";
 
 const formatImageUrl = (data) => {
   if (!data.image) return data;
