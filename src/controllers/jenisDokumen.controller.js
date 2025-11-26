@@ -43,3 +43,19 @@ export const updateJenisDokumen = async (req, res, next) => {
     next(err);
   }
 };
+
+export const deleteJenisDokumen = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const data = await Services.deleteJenisDokumen(id);
+
+    res.json({
+      status: "success",
+      message: "Jenis Dokumen berhasil di hapus",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

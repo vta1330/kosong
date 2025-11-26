@@ -5,7 +5,13 @@ import * as services from "../services/programKerja.service.js";
  */
 export const createProgramKerja = async (req, res, next) => {
   try {
-    const data = await services.createProgramKerja(req.body);
+    const { judul, sub_judul, description, kategori } = req.body;
+    const data = await services.createProgramKerja({
+      judul,
+      sub_judul,
+      description,
+      kategori,
+    });
 
     res.json({
       status: "success",
